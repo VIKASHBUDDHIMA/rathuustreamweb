@@ -400,6 +400,62 @@
         .net-card:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--primary); }
 
         @media (max-width: 900px) { .network-container { flex-wrap: wrap; } .net-card { flex: 1 1 45%; } }
+
+        /* --- GAME SHINE EFFECT --- */
+        #game-shine-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 5;
+            display: none;
+        }
+        #game-shine-container.active-shine {
+            display: block;
+        }
+        .shine-strip {
+            position: absolute;
+            top: -50%;
+            right: -100%;
+            width: 8px;
+            height: 250%;
+            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.9), transparent);
+            box-shadow: 0 0 15px 2px var(--neon-blue);
+            transform: rotate(-45deg);
+            animation: slide-diagonal 30s infinite cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        @keyframes slide-diagonal {
+            0%, 94% { right: -100%; opacity: 0; }
+            94.1% { opacity: 1; }
+            97% { right: 150%; opacity: 1; }
+            97.1%, 100% { right: 150%; opacity: 0; }
+        }
+        .sparkle-star {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            animation: star-pop 30s infinite ease-out;
+        }
+        .sparkle-star::before, .sparkle-star::after {
+            content: '';
+            position: absolute;
+            background: #fff;
+            box-shadow: 0 0 12px 3px var(--neon-blue);
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .sparkle-star::before { width: 40px; height: 3px; }
+        .sparkle-star::after { width: 3px; height: 40px; }
+        @keyframes star-pop {
+            0%, 96.5% { opacity: 0; transform: scale(0) rotate(0deg); }
+            97% { opacity: 1; transform: scale(1.3) rotate(45deg); }
+            97.5% { opacity: 1; transform: scale(1) rotate(90deg); }
+            98.5%, 100% { opacity: 0; transform: scale(0) rotate(180deg); }
+        }
     </style>
 </head>
 
@@ -414,7 +470,7 @@
     <div id="canvas-container"></div>
 
     <nav id="navbar">
-        <div class="logo">RATHUU<span>STREAM</span></div>
+        <div class="logo">RATHUU<span>STREAMES</span></div>
         <div class="menu-toggle" id="mobile-menu-btn"><i class="fas fa-bars"></i></div>
         <div class="nav-links" id="nav-list">
             <a href="#home">Home</a>
@@ -427,7 +483,7 @@
     </nav>
 
     <section id="home" style="background:transparent; border:none; backdrop-filter:none;">
-        <h1 class="hero-title reveal">RATHUU <span>STREAM</span></h1>
+        <h1 class="hero-title reveal">RATHUU <span>STREAMS</span></h1>
         <p class="reveal" style="letter-spacing: 12px; color: #666; font-weight: 800; margin-top: 20px; font-size: 13px;">NEXT GEN PERFORMANCE</p>
     </section>
 
@@ -476,6 +532,10 @@
             <div class="card-3d reveal">
                 <div class="card-img-holder">
                     <img id="gs-game-img" src="" alt="Current Game" style="width:100%; height:100%; object-fit:cover;">
+                    <div id="game-shine-container">
+                        <div class="shine-strip"></div>
+                        <div class="sparkle-star"></div>
+                    </div>
                 </div>
                 <h3 id="gs-game-name" style="font-family:'Bebas Neue'; font-size:2rem; text-align:center; margin-top:15px; position: relative; z-index: 1;">LOADING...</h3>
             </div>
@@ -655,6 +715,13 @@
                 // Game Info
                 if (d.CurrentGame) document.getElementById('gs-game-name').innerText = d.CurrentGame;
                 if (d.CurrentGameImg) document.getElementById('gs-game-img').src = d.CurrentGameImg;
+
+                // --- SHINE EFFECT CONTROL ---
+                if (d.ShineEffect && d.ShineEffect.toLowerCase() === 'yes') {
+                    document.getElementById('game-shine-container').classList.add('active-shine');
+                } else if (document.getElementById('game-shine-container')) {
+                    document.getElementById('game-shine-container').classList.remove('active-shine');
+                }
 
                 // Shorts Links (Fixed & Applied)
                 if (d.Short1) document.getElementById('gs-short1').src = fixYoutubeUrl(d.Short1);
