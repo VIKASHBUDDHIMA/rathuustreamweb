@@ -422,10 +422,10 @@
             background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.9), transparent);
             box-shadow: 0 0 15px 2px var(--neon-blue);
             transform: rotate(-45deg);
-            animation: slide-diagonal 30s infinite cubic-bezier(0.25, 1, 0.5, 1);
+            animation: slide-diagonal 13s infinite cubic-bezier(0.25, 1, 0.5, 1);
         }
         @keyframes slide-diagonal {
-            0%, 94% { right: -100%; opacity: 0; }
+            0%, 80% { right: -100%; opacity: 0; }
             94.1% { opacity: 1; }
             97% { right: 150%; opacity: 1; }
             97.1%, 100% { right: 150%; opacity: 0; }
@@ -437,7 +437,7 @@
             width: 0;
             height: 0;
             opacity: 0;
-            animation: star-pop 30s infinite ease-out;
+            animation: star-pop 13s infinite ease-out;
         }
         .sparkle-star::before, .sparkle-star::after {
             content: '';
