@@ -24,7 +24,7 @@
             --bg: #050505;
             --glass: rgba(12, 12, 12, 0.85);
             --border: rgba(255, 255, 255, 0.1);
-            --neon-blue: #00f3ff;
+            --neon-blue: #ff003c;
         }
 
         /* --- ADVANCED SLOW SCROLL ANIMATION --- */
@@ -173,6 +173,11 @@
             }
             .nav-links.active { right: 0; }
             .nav-links a { font-size: 20px; }
+            
+            /* MOBILE SPECIFIC ADDITIONS */
+            .hide-mobile { display: none !important; }
+            .hero-title { font-size: clamp(3.5rem, 12vw, 5rem) !important; }
+            .card-img-holder img { object-fit: contain !important; }
         }
 
         #home {
@@ -238,8 +243,8 @@
         .card-3d::before, .net-card::before, .mini-list-item::before {
             content: '';
             position: absolute;
-            top: var(--m-y, 0);
-            left: var(--m-x, 0);
+            top: var(--m-y, -1000px);
+            left: var(--m-x, -1000px);
             width: 500px;
             height: 500px;
             background: radial-gradient(circle, rgba(255, 0, 60, 0.15) 0%, rgba(255, 0, 60, 0.05) 30%, transparent 70%);
@@ -467,10 +472,20 @@
         <p style="font-size: 10px; color: #444; margin-top: 10px; letter-spacing: 2px;">RATHUU STREAM v1.0</p>
     </div>
 
+    <div id="mobile-warning-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.5s ease;">
+        <div style="position: relative; width: 85%; max-width: 400px; background: rgba(20, 20, 20, 0.95); padding: 40px 25px; border-radius: 15px; box-shadow: 0 0 40px rgba(255,0,60,0.4); border: 1px solid var(--primary); text-align: center;">
+            <i class="fas fa-times" id="close-warning-btn" style="position: absolute; top: 15px; right: 20px; color: #fff; cursor: pointer; font-size: 20px; opacity: 0.7; transition: 0.3s;"></i>
+            
+            <i class="fas fa-desktop" style="color: var(--primary); font-size: 45px; margin-bottom: 20px;"></i>
+            <h3 style="color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; margin-bottom: 12px; letter-spacing: 2px;">DESKTOP RECOMMENDED</h3>
+            <p style="color: #bbb; font-size: 15px; font-weight: 300; line-height: 1.6; margin: 0; font-family: 'Outfit', sans-serif;">For the best performance and visual experience, please visit this website on a desktop.</p>
+        </div>
+    </div>
+
     <div id="canvas-container"></div>
 
     <nav id="navbar">
-        <div class="logo">RATHUU<span>STREAMES</span></div>
+        <div class="logo">R<i class="hide-mobile" style="font-style:normal;">ATHUU</i><span>S<i class="hide-mobile" style="font-style:normal;">TREAMES</i></span></div>
         <div class="menu-toggle" id="mobile-menu-btn"><i class="fas fa-bars"></i></div>
         <div class="nav-links" id="nav-list">
             <a href="#home">Home</a>
@@ -632,9 +647,10 @@
         }
         animate();
 
-        // --- HOVER & GLOW LOGIC ---
+        // --- HOVER & GLOW LOGIC (WITH MOBILE TOUCH FIX) ---
         function init3DHover() {
             document.querySelectorAll('.card-3d, .net-card, .mini-list-item').forEach(card => {
+                // Desktop Hover
                 card.addEventListener('mousemove', e => {
                     let rect = card.getBoundingClientRect();
                     let x = e.clientX - rect.left;
@@ -645,9 +661,29 @@
                     let rY = (e.clientX - rect.left - rect.width / 2) / 15;
                     card.style.transform = `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale(1.02)`;
                 });
-                card.addEventListener('mouseleave', () => {
+
+                // Mobile Touch support
+                card.addEventListener('touchmove', e => {
+                    let rect = card.getBoundingClientRect();
+                    let touch = e.touches[0];
+                    let x = touch.clientX - rect.left;
+                    let y = touch.clientY - rect.top;
+                    card.style.setProperty('--m-x', `${x}px`);
+                    card.style.setProperty('--m-y', `${y}px`);
+                    let rX = -(touch.clientY - rect.top - rect.height / 2) / 25; 
+                    let rY = (touch.clientX - rect.left - rect.width / 2) / 25;
+                    card.style.transform = `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale(1.02)`;
+                }, {passive: true});
+
+                // Reset animation on mouse leave and touch end
+                const resetAnimation = () => {
                     card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
-                });
+                    card.style.setProperty('--m-x', `-1000px`); 
+                    card.style.setProperty('--m-y', `-1000px`);
+                };
+
+                card.addEventListener('mouseleave', resetAnimation);
+                card.addEventListener('touchend', resetAnimation);
             });
         }
         init3DHover();
@@ -669,7 +705,6 @@
             if (!url) return "";
             let videoId = "";
             
-            // Extract Video ID from different YouTube URL formats
             if (url.includes("shorts/")) {
                 videoId = url.split("shorts/")[1].split("?")[0].split("&")[0];
             } else if (url.includes("v=")) {
@@ -681,7 +716,6 @@
             }
 
             if (videoId) {
-                // Cleanest parameters: No title, No related videos from others, Minimal branding
                 return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&controls=1`;
             }
             return url;
@@ -723,7 +757,7 @@
                     document.getElementById('game-shine-container').classList.remove('active-shine');
                 }
 
-                // Shorts Links (Fixed & Applied)
+                // Shorts Links
                 if (d.Short1) document.getElementById('gs-short1').src = fixYoutubeUrl(d.Short1);
                 if (d.Short2) document.getElementById('gs-short2').src = fixYoutubeUrl(d.Short2);
                 if (d.Short3) document.getElementById('gs-short3').src = fixYoutubeUrl(d.Short3);
@@ -769,35 +803,60 @@
                 // Counters
                 animateCounter('yt-subs', parseInt(d.YoutubeSubs || 0));
                 animateCounter('yt-views', parseInt(d.TotalViews || 0));
-                animateCounter('yt-vids', parseInt(d.Uploads || 0));
+                if(d.TotalUploads) animateCounter('yt-vids', parseInt(d.TotalUploads || 0));
 
-                setTimeout(() => {
-                    const loader = document.getElementById('loader');
-                    loader.style.opacity = '0';
-                    setTimeout(() => { loader.style.visibility = 'hidden'; }, 800);
-                }, 1000);
-            } catch (e) { console.error(e); document.getElementById('loader').style.display = 'none'; }
+            } catch (error) {
+                console.error("Data Sync Error", error);
+            }
         }
 
+        // --- ANIMATE COUNTER FUNCTION ---
         function animateCounter(id, target) {
             let el = document.getElementById(id);
-            if (!el) return;
-            let current = 0;
-            let increment = target / 60;
-            let timer = setInterval(() => {
-                current += increment;
-                if (current >= target) { el.innerText = Math.floor(target).toLocaleString(); clearInterval(timer); }
-                else el.innerText = Math.floor(current).toLocaleString();
+            if (!el || !target) return;
+            let count = 0;
+            let speed = target / 50 || 1; 
+            let inc = setInterval(() => {
+                count += speed;
+                if(count >= target) {
+                    el.innerText = target;
+                    clearInterval(inc);
+                } else {
+                    el.innerText = Math.floor(count);
+                }
             }, 30);
         }
 
-        window.addEventListener('load', syncData);
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if(window.scrollY > 50) nav.classList.add('scrolled');
-            else nav.classList.remove('scrolled');
+        // --- LOADER & FULL SCREEN OVERLAY LOGIC ---
+        window.addEventListener('load', () => {
+            syncData(); // Fetch Data
+
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                
+                setTimeout(() => {
+                    loader.style.visibility = 'hidden';
+                    
+                    // Show full screen mobile warning overlay if screen is small
+                    if (window.innerWidth <= 900) {
+                        const warningOverlay = document.getElementById('mobile-warning-overlay');
+                        warningOverlay.style.display = 'flex';
+                        setTimeout(() => {
+                            warningOverlay.style.opacity = '1';
+                        }, 50);
+                    }
+                }, 800);
+            }, 1500); // Loader waiting time
         });
-        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+        // Close button logic for mobile warning overlay
+        document.getElementById('close-warning-btn').addEventListener('click', () => {
+            const warningOverlay = document.getElementById('mobile-warning-overlay');
+            warningOverlay.style.opacity = '0';
+            setTimeout(() => { warningOverlay.style.display = 'none'; }, 500);
+        });
+
     </script>
 </body>
 </html>
