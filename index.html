@@ -177,6 +177,49 @@
             /* MOBILE SPECIFIC ADDITIONS */
             .hide-mobile { display: none !important; }
             .hero-title { font-size: clamp(3.5rem, 12vw, 5rem) !important; }
+
+            /* FIXED NETWORK CARDS FOR MOBILE */
+            .network-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .net-card {
+                padding: 20px 15px;
+                min-height: auto;
+            }
+            .net-card i {
+                font-size: 35px;
+                margin-bottom: 10px;
+            }
+            .net-card h3 {
+                font-size: 1.4rem;
+            }
+
+            /* DISABLE HOVER ANIMATIONS ON MOBILE */
+            .card-3d:hover, .net-card:hover, .mini-list-item:hover {
+                transform: none !important;
+                box-shadow: none !important;
+                border-color: var(--border) !important;
+            }
+            .short-card:hover {
+                aspect-ratio: 4/5 !important;
+                transform: none !important;
+            }
+            .mini-list-item:hover {
+                background: rgba(255, 255, 255, 0.03) !important;
+            }
+
+            /* SEE MORE / LESS BUTTON ALIGNMENT FOR MOBILE */
+            div#see-more-wrapper[style] {
+                display: flex !important;
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            #see-more-btn, #see-less-btn {
+                width: 80%;
+                margin-left: 0 !important;
+            }
         }
 
         #home {
@@ -419,7 +462,7 @@
         .net-card h3 { font-family: 'Bebas Neue'; font-size: 1.8rem; color: #fff !important; margin: 0; }
         .net-card:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--primary); }
 
-        /* --- SEE MORE BUTTON STYLE --- */
+        /* --- SEE MORE & SEE LESS BUTTON STYLE --- */
         .see-more-container { text-align: center; margin-top: 50px; width: 100%; }
         #see-more-btn {
             padding: 12px 40px;
@@ -435,6 +478,22 @@
             backdrop-filter: blur(5px);
         }
         #see-more-btn:hover { background: var(--primary); box-shadow: 0 0 30px rgba(255, 0, 60, 0.4); transform: translateY(-3px); }
+        
+        #see-less-btn {
+            padding: 12px 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #555;
+            color: #fff;
+            font-family: 'Bebas Neue';
+            font-size: 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 2px;
+            backdrop-filter: blur(5px);
+            margin-left: 15px;
+        }
+        #see-less-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: #fff; transform: translateY(-3px); }
 
         /* --- GAME SHINE EFFECT --- */
         #game-shine-container {
@@ -606,6 +665,7 @@
             </div>
         <div class="see-more-container" id="see-more-wrapper" style="display: none;">
             <button id="see-more-btn">SEE MORE</button>
+            <button id="see-less-btn" style="display: none;">SHOW LESS</button>
         </div>
     </section>
 
@@ -680,6 +740,8 @@
         // --- HOVER & GLOW LOGIC ---
         function apply3DEffect(card) {
             card.addEventListener('mousemove', e => {
+                if (window.innerWidth <= 900) return; // Disable effect on mobile
+                
                 let rect = card.getBoundingClientRect();
                 let x = e.clientX - rect.left;
                 let y = e.clientY - rect.top;
@@ -691,6 +753,8 @@
             });
 
             card.addEventListener('touchmove', e => {
+                if (window.innerWidth <= 900) return; // Disable effect on mobile
+                
                 let rect = card.getBoundingClientRect();
                 let touch = e.touches[0];
                 let x = touch.clientX - rect.left;
@@ -873,6 +937,8 @@
         function renderShortsBatch() {
             const container = document.getElementById('shorts-container');
             const seeMoreWrapper = document.getElementById('see-more-wrapper');
+            const seeMoreBtn = document.getElementById('see-more-btn');
+            const seeLessBtn = document.getElementById('see-less-btn');
             const batchSize = 3;
             const end = Math.min(currentShortsIndex + batchSize, allShorts.length);
 
@@ -900,13 +966,40 @@
             currentShortsIndex = end;
 
             if (currentShortsIndex < allShorts.length) {
-                seeMoreWrapper.style.display = 'block';
+                seeMoreWrapper.style.display = 'block'; 
+                seeMoreBtn.style.display = 'inline-block';
             } else {
-                seeMoreWrapper.style.display = 'none';
+                seeMoreBtn.style.display = 'none';
+            }
+
+            // Show 'Show Less' button if there are more than 3 cards loaded
+            if (currentShortsIndex > 3) {
+                seeLessBtn.style.display = 'inline-block';
+            } else {
+                seeLessBtn.style.display = 'none';
             }
         }
 
         document.getElementById('see-more-btn').addEventListener('click', renderShortsBatch);
+
+        // --- ADDED: SHOW LESS BUTTON LOGIC ---
+        document.getElementById('see-less-btn').addEventListener('click', () => {
+            const container = document.getElementById('shorts-container');
+            const cards = container.querySelectorAll('.short-card');
+            
+            // Remove cards starting from index 3 (Keep only the first 3 cards)
+            for (let i = cards.length - 1; i >= 3; i--) {
+                container.removeChild(cards[i]);
+            }
+            
+            currentShortsIndex = Math.min(3, allShorts.length);
+            
+            document.getElementById('see-less-btn').style.display = 'none';
+            
+            if (currentShortsIndex < allShorts.length) {
+                document.getElementById('see-more-btn').style.display = 'inline-block';
+            }
+        });
 
         function animateCounter(id, target) {
             let el = document.getElementById(id);
