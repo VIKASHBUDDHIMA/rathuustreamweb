@@ -176,6 +176,49 @@
             
             .hide-mobile { display: none !important; }
             .hero-title { font-size: clamp(3.5rem, 12vw, 5rem) !important; }
+
+            .network-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .net-card {
+                padding: 20px 15px;
+                min-height: auto;
+            }
+            .net-card i {
+                font-size: 35px;
+                margin-bottom: 10px;
+            }
+            .net-card h3 {
+                font-size: 1.4rem;
+            }
+
+            .card-3d:hover, .net-card:hover, .mini-list-item:hover {
+                transform: none !important;
+                box-shadow: none !important;
+                border-color: var(--border) !important;
+            }
+            
+            .short-card:hover, .short-card.active-touch, .short-card:focus-within {
+                aspect-ratio: 9/16 !important;
+                transform: none !important; 
+                border-color: var(--primary) !important;
+            }
+
+            .mini-list-item:hover {
+                background: rgba(255, 255, 255, 0.03) !important;
+            }
+
+            div#see-more-wrapper[style] {
+                display: flex !important;
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            #see-more-btn, #see-less-btn {
+                width: 80%;
+                margin-left: 0 !important;
+            }
         }
 
         #home {
@@ -279,6 +322,7 @@
             .card-img-holder { height: 200px; }
         }
 
+        /* --- STATUS CARD --- */
         .status-container {
             display: flex;
             flex-direction: column;
@@ -365,6 +409,7 @@
             box-shadow: 0 0 35px rgba(255, 0, 60, 0.15);
         }
 
+        /* --- STATS & SPECS --- */
         .specs-mini-list { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; position: relative; z-index: 1; }
         .mini-list-item {
             background: rgba(255, 255, 255, 0.03);
@@ -428,7 +473,24 @@
             backdrop-filter: blur(5px);
         }
         #see-more-btn:hover { background: var(--primary); box-shadow: 0 0 30px rgba(255, 0, 60, 0.4); transform: translateY(-3px); }
+        
+        #see-less-btn {
+            padding: 12px 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #555;
+            color: #fff;
+            font-family: 'Bebas Neue';
+            font-size: 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 2px;
+            backdrop-filter: blur(5px);
+            margin-left: 15px;
+        }
+        #see-less-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: #fff; transform: translateY(-3px); }
 
+        /* --- GAME SHINE EFFECT --- */
         #game-shine-container {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -490,7 +552,7 @@
 
     <div id="loader">
         <div class="loader-ring"></div>
-        <div style="font-family: 'Bebas Neue'; font-size: 2rem; letter-spacing: 5px; color: var(--neon-blue);">LODING DATA</div>
+        <div style="font-family: 'Bebas Neue'; font-size: 2rem; letter-spacing: 5px; color: var(--neon-blue);">LOADING DATA</div>
         <p style="font-size: 10px; color: #444; margin-top: 10px; letter-spacing: 2px;">RATHUU STREAM v1.0</p>
     </div>
 
@@ -598,6 +660,7 @@
             </div>
         <div class="see-more-container" id="see-more-wrapper" style="display: none;">
             <button id="see-more-btn">SEE MORE</button>
+            <button id="see-less-btn" style="display: none;">SHOW LESS</button>
         </div>
     </section>
 
@@ -623,6 +686,13 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+        // --- FORCE PAGE TO START AT TOP ON LOAD ---
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        // --- MOBILE MENU LOGIC ---
         const menuBtn = document.getElementById('mobile-menu-btn');
         const navList = document.getElementById('nav-list');
         
@@ -640,6 +710,7 @@
             });
         });
 
+        // --- THREE.JS BACKGROUND ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -667,8 +738,11 @@
         }
         animate();
 
+        // --- HOVER & GLOW LOGIC ---
         function apply3DEffect(card) {
             card.addEventListener('mousemove', e => {
+                if (window.innerWidth <= 900) return; 
+                
                 let rect = card.getBoundingClientRect();
                 let x = e.clientX - rect.left;
                 let y = e.clientY - rect.top;
@@ -680,6 +754,8 @@
             });
 
             card.addEventListener('touchmove', e => {
+                if (window.innerWidth <= 900) return; 
+                
                 let rect = card.getBoundingClientRect();
                 let touch = e.touches[0];
                 let x = touch.clientX - rect.left;
@@ -718,30 +794,53 @@
             revealObserver.observe(el);
         });
 
+        // --- UNIVERSAL URL FIXER ---
         function fixVideoUrl(url) {
             if (!url) return "";
             let finalUrl = url;
+
             if (url.includes("youtube.com") || url.includes("youtu.be")) {
                 let videoId = "";
-                if (url.includes("shorts/")) videoId = url.split("shorts/")[1].split("?")[0].split("&")[0];
-                else if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
-                else if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
-                else if (url.includes("embed/")) videoId = url.split("embed/")[1].split("?")[0];
-                if (videoId) finalUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&controls=0`;
-            } else if (url.includes("tiktok.com")) {
+                if (url.includes("shorts/")) {
+                    videoId = url.split("shorts/")[1].split("?")[0].split("&")[0];
+                } else if (url.includes("v=")) {
+                    videoId = url.split("v=")[1].split("&")[0];
+                } else if (url.includes("youtu.be/")) {
+                    videoId = url.split("youtu.be/")[1].split("?")[0];
+                } else if (url.includes("embed/")) {
+                    videoId = url.split("embed/")[1].split("?")[0];
+                }
+                if (videoId) {
+                    finalUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&controls=0`;
+                }
+            } 
+            else if (url.includes("tiktok.com")) {
                 let videoId = "";
-                if (url.includes("/video/")) videoId = url.split("/video/")[1].split("?")[0];
-                if (videoId) finalUrl = `https://www.tiktok.com/embed/v2/${videoId}`;
-            } else if (url.includes("instagram.com")) {
+                if (url.includes("/video/")) {
+                    videoId = url.split("/video/")[1].split("?")[0];
+                }
+                if (videoId) {
+                    finalUrl = `https://www.tiktok.com/embed/v2/${videoId}`;
+                }
+            }
+            else if (url.includes("instagram.com")) {
                 let postId = "";
-                if (url.includes("/reel/")) postId = url.split("/reel/")[1].split("/")[0].split("?")[0];
-                else if (url.includes("/p/")) postId = url.split("/p/")[1].split("/")[0].split("?")[0];
-                if (postId) finalUrl = `https://www.instagram.com/p/${postId}/embed/?hidecaption=1`;
+                if (url.includes("/reel/")) {
+                    postId = url.split("/reel/")[1].split("/")[0].split("?")[0];
+                } else if (url.includes("/p/")) {
+                    postId = url.split("/p/")[1].split("/")[0].split("?")[0];
+                }
+                if (postId) {
+                    finalUrl = `https://www.instagram.com/p/${postId}/embed/?hidecaption=1`;
+                } else if (url.includes("/embed")) {
+                    finalUrl = url;
+                }
             }
             return finalUrl;
         }
 
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQr9v_05WJRLQRyQcKUlsWq2t-PaYHVB0sp8nrHwfZO7QfVhHlKkxFqWaf_yN8VJC3QnQZELt5JjLws/pub?output=csv';
+        
         let allShorts = [];
         let currentShortsIndex = 0;
 
@@ -762,12 +861,14 @@
 
                 if (d.ProfileImg) document.getElementById('gs-profile-img').src = d.ProfileImg;
                 if (d.AboutText) document.getElementById('gs-about-text').innerText = d.AboutText;
+                
                 if (d.CPU) document.getElementById('gs-cpu').innerText = d.CPU;
                 if (d.GPU) document.getElementById('gs-gpu').innerText = d.GPU;
                 if (d.RAM) document.getElementById('gs-ram').innerText = d.RAM;
                 if (d.STORAGE) document.getElementById('gs-stor').innerText = d.STORAGE;
                 if (d.DISPLAY) document.getElementById('gs-dis').innerText = d.DISPLAY;
                 if (d.PCSetupImg) document.getElementById('gs-pc-img').src = d.PCSetupImg;
+
                 if (d.CurrentGame) document.getElementById('gs-game-name').innerText = d.CurrentGame;
                 if (d.CurrentGameImg) document.getElementById('gs-game-img').src = d.CurrentGameImg;
 
@@ -779,7 +880,11 @@
 
                 allShorts = Object.keys(d)
                     .filter(key => key.startsWith('Short') && d[key].length > 5)
-                    .sort((a, b) => (parseInt(a.replace('Short', '')) || 0) - (parseInt(b.replace('Short', '')) || 0))
+                    .sort((a, b) => {
+                        let numA = parseInt(a.replace('Short', '')) || 0;
+                        let numB = parseInt(b.replace('Short', '')) || 0;
+                        return numA - numB;
+                    })
                     .map(key => d[key]);
 
                 renderShortsBatch();
@@ -789,8 +894,8 @@
                 if (d.TiktokLink) document.getElementById('gs-tiktok').href = d.TiktokLink;
                 if (d.FacebookLink) document.getElementById('gs-facebook').href = d.FacebookLink;
 
-                // --- LIVE STATUS LOGIC TRIGGERED BY LINK ONLY ---
-                const liveLinkVal = d.LiveLink ? d.LiveLink.trim() : "";
+                // --- UPDATED LIVE STATUS LOGIC ---
+                const liveLinkValue = d.LiveLink ? d.LiveLink.trim() : "";
                 const dot = document.getElementById('status-dot');
                 const stxt = document.getElementById('status-text');
                 const subTxt = document.getElementById('status-sub-text');
@@ -798,7 +903,8 @@
                 const cardBox = document.getElementById('status-card-box');
                 const scan = document.getElementById('scanline');
 
-                if (liveLinkVal.length > 5) {
+                // Check if LiveLink column contains a URL starting with http
+                if (liveLinkValue.startsWith("http")) {
                     dot.className = "status-dot dot-online";
                     cardBox.classList.add('status-card-active');
                     stxt.innerText = "LIVE NOW";
@@ -807,7 +913,7 @@
                     subTxt.innerText = "Enjoy the stream!";
                     subTxt.style.color = "#aaa";
                     lBtn.style.display = "inline-block";
-                    lBtn.href = liveLinkVal;
+                    lBtn.href = liveLinkValue; // DIRECT LINK TO LIVE STREAM
                     scan.style.display = "block";
                 } else {
                     dot.className = "status-dot dot-offline";
@@ -833,24 +939,72 @@
         function renderShortsBatch() {
             const container = document.getElementById('shorts-container');
             const seeMoreWrapper = document.getElementById('see-more-wrapper');
+            const seeMoreBtn = document.getElementById('see-more-btn');
+            const seeLessBtn = document.getElementById('see-less-btn');
             const batchSize = 3;
             const end = Math.min(currentShortsIndex + batchSize, allShorts.length);
+
             for (let i = currentShortsIndex; i < end; i++) {
                 const card = document.createElement('div');
                 card.className = 'card-3d short-card reveal';
+                
                 let rawUrl = allShorts[i];
                 let fixedUrl = fixVideoUrl(rawUrl);
-                let frameClass = rawUrl.includes("instagram.com") ? "ig-frame" : "";
+                let frameClass = "";
+                
+                if (rawUrl.includes("instagram.com")) {
+                    frameClass = "ig-frame";
+                } 
+
                 card.innerHTML = `<iframe class="${frameClass}" src="${fixedUrl}" scrolling="no" frameborder="0" allowfullscreen></iframe>`;
+                
+                card.addEventListener('touchstart', function() {
+                    if (window.innerWidth <= 900) {
+                        document.querySelectorAll('.short-card').forEach(c => c.classList.remove('active-touch'));
+                        this.classList.add('active-touch');
+                    }
+                }, {passive: true});
+
                 container.appendChild(card);
+                
                 revealObserver.observe(card);
                 apply3DEffect(card);
             }
+
             currentShortsIndex = end;
-            seeMoreWrapper.style.display = currentShortsIndex < allShorts.length ? 'block' : 'none';
+
+            if (currentShortsIndex < allShorts.length) {
+                seeMoreWrapper.style.display = 'block'; 
+                seeMoreBtn.style.display = 'inline-block';
+            } else {
+                seeMoreBtn.style.display = 'none';
+            }
+
+            if (currentShortsIndex > 3) {
+                seeLessBtn.style.display = 'inline-block';
+            } else {
+                seeLessBtn.style.display = 'none';
+            }
         }
 
         document.getElementById('see-more-btn').addEventListener('click', renderShortsBatch);
+
+        document.getElementById('see-less-btn').addEventListener('click', () => {
+            const container = document.getElementById('shorts-container');
+            const cards = container.querySelectorAll('.short-card');
+            
+            for (let i = cards.length - 1; i >= 3; i--) {
+                container.removeChild(cards[i]);
+            }
+            
+            currentShortsIndex = Math.min(3, allShorts.length);
+            
+            document.getElementById('see-less-btn').style.display = 'none';
+            
+            if (currentShortsIndex < allShorts.length) {
+                document.getElementById('see-more-btn').style.display = 'inline-block';
+            }
+        });
 
         function animateCounter(id, target) {
             let el = document.getElementById(id);
@@ -862,21 +1016,28 @@
                 if(count >= target) {
                     el.innerText = target.toLocaleString('en-US');
                     clearInterval(inc);
-                } else el.innerText = Math.floor(count).toLocaleString('en-US');
+                } else {
+                    el.innerText = Math.floor(count).toLocaleString('en-US');
+                }
             }, 30);
         }
 
         window.addEventListener('load', () => {
             syncData();
+
             setTimeout(() => {
                 const loader = document.getElementById('loader');
                 loader.style.opacity = '0';
+                
                 setTimeout(() => {
                     loader.style.visibility = 'hidden';
+                    
                     if (window.innerWidth <= 900) {
                         const warningOverlay = document.getElementById('mobile-warning-overlay');
                         warningOverlay.style.display = 'flex';
-                        setTimeout(() => { warningOverlay.style.opacity = '1'; }, 50);
+                        setTimeout(() => {
+                            warningOverlay.style.opacity = '1';
+                        }, 50);
                     }
                 }, 800);
             }, 1500);
@@ -887,6 +1048,7 @@
             warningOverlay.style.opacity = '0';
             setTimeout(() => { warningOverlay.style.display = 'none'; }, 500);
         });
+
     </script>
 </body>
 </html>
