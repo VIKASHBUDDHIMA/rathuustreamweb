@@ -77,8 +77,6 @@
             box-sizing: border-box;
             font-family: 'Outfit', sans-serif;
             scroll-behavior: smooth;
-            /* Global fix for mobile tap highlights */
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -179,7 +177,6 @@
             /* MOBILE SPECIFIC ADDITIONS */
             .hide-mobile { display: none !important; }
             .hero-title { font-size: clamp(3.5rem, 12vw, 5rem) !important; }
-            .card-img-holder img { object-fit: contain !important; }
         }
 
         #home {
@@ -240,9 +237,6 @@
             transform-style: preserve-3d;
             transition: transform 0.1s ease-out, border 0.3s, box-shadow 0.3s, background 0.4s;
             overflow: hidden;
-            /* Fix for the black tap highlight bug */
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
         }
 
         .card-3d::before, .net-card::before, .mini-list-item::before {
@@ -409,7 +403,22 @@
         .net-card h3 { font-family: 'Bebas Neue'; font-size: 1.8rem; color: #fff !important; margin: 0; }
         .net-card:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--primary); }
 
-        @media (max-width: 900px) { .network-container { flex-wrap: wrap; } .net-card { flex: 1 1 45%; } }
+        /* --- SEE MORE BUTTON STYLE --- */
+        .see-more-container { text-align: center; margin-top: 50px; width: 100%; }
+        #see-more-btn {
+            padding: 12px 40px;
+            background: rgba(255, 0, 60, 0.1);
+            border: 1px solid var(--primary);
+            color: #fff;
+            font-family: 'Bebas Neue';
+            font-size: 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 2px;
+            backdrop-filter: blur(5px);
+        }
+        #see-more-btn:hover { background: var(--primary); box-shadow: 0 0 30px rgba(255, 0, 60, 0.4); transform: translateY(-3px); }
 
         /* --- GAME SHINE EFFECT --- */
         #game-shine-container {
@@ -577,10 +586,10 @@
 
     <section id="highlights">
         <h2 class="section-title reveal">Elite <span>Shorts</span></h2>
-        <div class="grid">
-            <div class="card-3d short-card reveal"><iframe id="gs-short1" src="" allowfullscreen></iframe></div>
-            <div class="card-3d short-card reveal"><iframe id="gs-short2" src="" allowfullscreen></iframe></div>
-            <div class="card-3d short-card reveal"><iframe id="gs-short3" src="" allowfullscreen></iframe></div>
+        <div class="grid" id="shorts-container">
+            </div>
+        <div class="see-more-container" id="see-more-wrapper" style="display: none;">
+            <button id="see-more-btn">SEE MORE</button>
         </div>
     </section>
 
@@ -652,44 +661,43 @@
         }
         animate();
 
-        // --- HOVER & GLOW LOGIC (WITH MOBILE TOUCH FIX) ---
-        function init3DHover() {
-            document.querySelectorAll('.card-3d, .net-card, .mini-list-item').forEach(card => {
-                // Desktop Hover
-                card.addEventListener('mousemove', e => {
-                    let rect = card.getBoundingClientRect();
-                    let x = e.clientX - rect.left;
-                    let y = e.clientY - rect.top;
-                    card.style.setProperty('--m-x', `${x}px`);
-                    card.style.setProperty('--m-y', `${y}px`);
-                    let rX = -(e.clientY - rect.top - rect.height / 2) / 15;
-                    let rY = (e.clientX - rect.left - rect.width / 2) / 15;
-                    card.style.transform = `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale(1.02)`;
-                });
-
-                // Mobile Touch support
-                card.addEventListener('touchmove', e => {
-                    let rect = card.getBoundingClientRect();
-                    let touch = e.touches[0];
-                    let x = touch.clientX - rect.left;
-                    let y = touch.clientY - rect.top;
-                    card.style.setProperty('--m-x', `${x}px`);
-                    card.style.setProperty('--m-y', `${y}px`);
-                    let rX = -(touch.clientY - rect.top - rect.height / 2) / 25; 
-                    let rY = (touch.clientX - rect.left - rect.width / 2) / 25;
-                    card.style.transform = `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale(1.02)`;
-                }, {passive: true});
-
-                // Reset animation on mouse leave and touch end
-                const resetAnimation = () => {
-                    card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
-                    card.style.setProperty('--m-x', `-1000px`); 
-                    card.style.setProperty('--m-y', `-1000px`);
-                };
-
-                card.addEventListener('mouseleave', resetAnimation);
-                card.addEventListener('touchend', resetAnimation);
+        // --- HOVER & GLOW LOGIC (MODIFIED FOR DYNAMIC ELEMENTS) ---
+        function apply3DEffect(card) {
+            card.addEventListener('mousemove', e => {
+                let rect = card.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+                card.style.setProperty('--m-x', `${x}px`);
+                card.style.setProperty('--m-y', `${y}px`);
+                let rX = -(e.clientY - rect.top - rect.height / 2) / 15;
+                let rY = (e.clientX - rect.left - rect.width / 2) / 15;
+                card.style.transform = `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale(1.02)`;
             });
+
+            card.addEventListener('touchmove', e => {
+                let rect = card.getBoundingClientRect();
+                let touch = e.touches[0];
+                let x = touch.clientX - rect.left;
+                let y = touch.clientY - rect.top;
+                card.style.setProperty('--m-x', `${x}px`);
+                card.style.setProperty('--m-y', `${y}px`);
+                let rX = -(touch.clientY - rect.top - rect.height / 2) / 25; 
+                let rY = (touch.clientX - rect.left - rect.width / 2) / 25;
+                card.style.transform = `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale(1.02)`;
+            }, {passive: true});
+
+            const resetAnimation = () => {
+                card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
+                card.style.setProperty('--m-x', `-1000px`); 
+                card.style.setProperty('--m-y', `-1000px`);
+            };
+
+            card.addEventListener('mouseleave', resetAnimation);
+            card.addEventListener('touchend', resetAnimation);
+        }
+
+        function init3DHover() {
+            document.querySelectorAll('.card-3d, .net-card, .mini-list-item').forEach(apply3DEffect);
         }
         init3DHover();
 
@@ -728,6 +736,9 @@
 
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQr9v_05WJRLQRyQcKUlsWq2t-PaYHVB0sp8nrHwfZO7QfVhHlKkxFqWaf_yN8VJC3QnQZELt5JjLws/pub?output=csv';
         
+        let allShorts = [];
+        let currentShortsIndex = 0;
+
         async function syncData() {
             try {
                 const res = await fetch(CSV_URL);
@@ -736,7 +747,11 @@
                 const d = {};
                 rows.forEach(row => {
                     const cols = row.split(',');
-                    if (cols.length > 1) d[cols[0].trim().replace(/['"]/g, '')] = cols.slice(1).join(',').trim().replace(/^"|"$/g, '');
+                    if (cols.length > 1) {
+                        let key = cols[0].trim().replace(/['"]/g, '');
+                        let value = cols.slice(1).join(',').trim().replace(/^"|"$/g, '');
+                        d[key] = value;
+                    }
                 });
 
                 // Profile & Text
@@ -755,17 +770,23 @@
                 if (d.CurrentGame) document.getElementById('gs-game-name').innerText = d.CurrentGame;
                 if (d.CurrentGameImg) document.getElementById('gs-game-img').src = d.CurrentGameImg;
 
-                // --- SHINE EFFECT CONTROL ---
                 if (d.ShineEffect && d.ShineEffect.toLowerCase() === 'yes') {
                     document.getElementById('game-shine-container').classList.add('active-shine');
                 } else if (document.getElementById('game-shine-container')) {
                     document.getElementById('game-shine-container').classList.remove('active-shine');
                 }
 
-                // Shorts Links
-                if (d.Short1) document.getElementById('gs-short1').src = fixYoutubeUrl(d.Short1);
-                if (d.Short2) document.getElementById('gs-short2').src = fixYoutubeUrl(d.Short2);
-                if (d.Short3) document.getElementById('gs-short3').src = fixYoutubeUrl(d.Short3);
+                // --- DYNAMIC SHORTS LOADING LOGIC ---
+                allShorts = Object.keys(d)
+                    .filter(key => key.startsWith('Short') && d[key].length > 5)
+                    .sort((a, b) => {
+                        let numA = parseInt(a.replace('Short', '')) || 0;
+                        let numB = parseInt(b.replace('Short', '')) || 0;
+                        return numA - numB;
+                    })
+                    .map(key => d[key]);
+
+                renderShortsBatch();
 
                 // Social Links
                 if (d.YoutubeLink) document.getElementById('gs-youtube').href = d.YoutubeLink;
@@ -805,7 +826,6 @@
                     scan.style.display = "none";
                 }
 
-                // Counters
                 animateCounter('yt-subs', parseInt(d.YoutubeSubs || 0));
                 animateCounter('yt-views', parseInt(d.TotalViews || 0));
                 if(d.TotalUploads) animateCounter('yt-vids', parseInt(d.TotalUploads || 0));
@@ -815,7 +835,34 @@
             }
         }
 
-        // --- ANIMATE COUNTER FUNCTION ---
+        function renderShortsBatch() {
+            const container = document.getElementById('shorts-container');
+            const seeMoreWrapper = document.getElementById('see-more-wrapper');
+            const batchSize = 3;
+            const end = Math.min(currentShortsIndex + batchSize, allShorts.length);
+
+            for (let i = currentShortsIndex; i < end; i++) {
+                const card = document.createElement('div');
+                card.className = 'card-3d short-card reveal';
+                card.innerHTML = `<iframe src="${fixYoutubeUrl(allShorts[i])}" allowfullscreen></iframe>`;
+                container.appendChild(card);
+                
+                // Observer and Hover effect apply to new element
+                revealObserver.observe(card);
+                apply3DEffect(card);
+            }
+
+            currentShortsIndex = end;
+
+            if (currentShortsIndex < allShorts.length) {
+                seeMoreWrapper.style.display = 'block';
+            } else {
+                seeMoreWrapper.style.display = 'none';
+            }
+        }
+
+        document.getElementById('see-more-btn').addEventListener('click', renderShortsBatch);
+
         function animateCounter(id, target) {
             let el = document.getElementById(id);
             if (!el || !target) return;
@@ -824,17 +871,16 @@
             let inc = setInterval(() => {
                 count += speed;
                 if(count >= target) {
-                    el.innerText = target.toLocaleString();
+                    el.innerText = target.toLocaleString('en-US');
                     clearInterval(inc);
                 } else {
-                    el.innerText = Math.floor(count).toLocaleString();
+                    el.innerText = Math.floor(count).toLocaleString('en-US');
                 }
             }, 30);
         }
 
-        // --- LOADER & FULL SCREEN OVERLAY LOGIC ---
         window.addEventListener('load', () => {
-            syncData(); // Fetch Data
+            syncData();
 
             setTimeout(() => {
                 const loader = document.getElementById('loader');
@@ -843,7 +889,6 @@
                 setTimeout(() => {
                     loader.style.visibility = 'hidden';
                     
-                    // Show full screen mobile warning overlay if screen is small
                     if (window.innerWidth <= 900) {
                         const warningOverlay = document.getElementById('mobile-warning-overlay');
                         warningOverlay.style.display = 'flex';
@@ -852,10 +897,9 @@
                         }, 50);
                     }
                 }, 800);
-            }, 1500); // Loader waiting time
+            }, 1500);
         });
 
-        // Close button logic for mobile warning overlay
         document.getElementById('close-warning-btn').addEventListener('click', () => {
             const warningOverlay = document.getElementById('mobile-warning-overlay');
             warningOverlay.style.opacity = '0';
