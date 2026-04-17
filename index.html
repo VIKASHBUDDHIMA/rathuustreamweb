@@ -810,7 +810,7 @@
             }
         }
 
-        // --- ANIMATE COUNTER FUNCTION ---
+        // --- ANIMATE COUNTER FUNCTION (UPDATED WITH COMMA FORMATTING) ---
         function animateCounter(id, target) {
             let el = document.getElementById(id);
             if (!el || !target) return;
@@ -819,10 +819,12 @@
             let inc = setInterval(() => {
                 count += speed;
                 if(count >= target) {
-                    el.innerText = target;
+                    // අන්තිම අගය කොමා සහිතව පෙන්වීමට format කරන ලදි
+                    el.innerText = target.toLocaleString('en-US');
                     clearInterval(inc);
                 } else {
-                    el.innerText = Math.floor(count);
+                    // Count වන අතරතුරත් කොමා සහිතව පෙන්වීමට format කරන ලදි
+                    el.innerText = Math.floor(count).toLocaleString('en-US');
                 }
             }, 30);
         }
