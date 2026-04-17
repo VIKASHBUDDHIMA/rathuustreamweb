@@ -391,7 +391,23 @@
         .stat-num { font-family: 'Bebas Neue'; font-size: 3.5rem; color: var(--primary); display: block; }
 
         .short-card { aspect-ratio: 4/5; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
-        .short-card iframe { width: 100%; height: 100%; border: none; }
+        
+        /* --- IFRAME CROP FIXES --- */
+        .short-card iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            overflow: hidden;
+        }
+
+        /* Instagram Crop - Hides the top header */
+        .ig-frame {
+            height: calc(100% + 55px) !important;
+            margin-top: -55px; 
+            width: calc(100% + 4px) !important;
+            margin-left: -2px;
+        }
+
         .short-card:hover { aspect-ratio: 9/16; transform: scale(1.05) translateY(-10px); border-color: var(--primary); }
 
         footer { padding: 50px; text-align: center; background: #000; color: #444; font-size: 11px; letter-spacing: 3px; border-top: 1px solid var(--border); }
@@ -713,12 +729,11 @@
             revealObserver.observe(el);
         });
 
-        // --- UNIVERSAL URL FIXER (YouTube, TikTok, Instagram) ---
+        // --- UNIVERSAL URL FIXER ---
         function fixVideoUrl(url) {
             if (!url) return "";
             let finalUrl = url;
 
-            // YouTube Logic
             if (url.includes("youtube.com") || url.includes("youtu.be")) {
                 let videoId = "";
                 if (url.includes("shorts/")) {
@@ -734,7 +749,6 @@
                     finalUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&controls=0`;
                 }
             } 
-            // TikTok Logic
             else if (url.includes("tiktok.com")) {
                 let videoId = "";
                 if (url.includes("/video/")) {
@@ -744,7 +758,6 @@
                     finalUrl = `https://www.tiktok.com/embed/v2/${videoId}`;
                 }
             }
-            // Instagram Logic
             else if (url.includes("instagram.com")) {
                 let postId = "";
                 if (url.includes("/reel/")) {
@@ -781,11 +794,9 @@
                     }
                 });
 
-                // Profile & Text
                 if (d.ProfileImg) document.getElementById('gs-profile-img').src = d.ProfileImg;
                 if (d.AboutText) document.getElementById('gs-about-text').innerText = d.AboutText;
                 
-                // Specs
                 if (d.CPU) document.getElementById('gs-cpu').innerText = d.CPU;
                 if (d.GPU) document.getElementById('gs-gpu').innerText = d.GPU;
                 if (d.RAM) document.getElementById('gs-ram').innerText = d.RAM;
@@ -793,7 +804,6 @@
                 if (d.DISPLAY) document.getElementById('gs-dis').innerText = d.DISPLAY;
                 if (d.PCSetupImg) document.getElementById('gs-pc-img').src = d.PCSetupImg;
 
-                // Game Info
                 if (d.CurrentGame) document.getElementById('gs-game-name').innerText = d.CurrentGame;
                 if (d.CurrentGameImg) document.getElementById('gs-game-img').src = d.CurrentGameImg;
 
@@ -803,7 +813,6 @@
                     document.getElementById('game-shine-container').classList.remove('active-shine');
                 }
 
-                // --- DYNAMIC SHORTS LOADING LOGIC ---
                 allShorts = Object.keys(d)
                     .filter(key => key.startsWith('Short') && d[key].length > 5)
                     .sort((a, b) => {
@@ -815,13 +824,11 @@
 
                 renderShortsBatch();
 
-                // Social Links
                 if (d.YoutubeLink) document.getElementById('gs-youtube').href = d.YoutubeLink;
                 if (d.DiscordLink) document.getElementById('gs-discord').href = d.DiscordLink;
                 if (d.TiktokLink) document.getElementById('gs-tiktok').href = d.TiktokLink;
                 if (d.FacebookLink) document.getElementById('gs-facebook').href = d.FacebookLink;
 
-                // Status Logic
                 const statusVal = d.Status ? d.Status.toLowerCase().trim() : "";
                 const dot = document.getElementById('status-dot');
                 const stxt = document.getElementById('status-text');
@@ -862,6 +869,7 @@
             }
         }
 
+        // --- MODIFIED TO ADD CSS HACKS & SCROLLING="NO" ---
         function renderShortsBatch() {
             const container = document.getElementById('shorts-container');
             const seeMoreWrapper = document.getElementById('see-more-wrapper');
@@ -871,8 +879,18 @@
             for (let i = currentShortsIndex; i < end; i++) {
                 const card = document.createElement('div');
                 card.className = 'card-3d short-card reveal';
-                // Updated line to use fixVideoUrl
-                card.innerHTML = `<iframe src="${fixVideoUrl(allShorts[i])}" allowfullscreen></iframe>`;
+                
+                let rawUrl = allShorts[i];
+                let fixedUrl = fixVideoUrl(rawUrl);
+                let frameClass = "";
+                
+                // Add specific classes to crop Instagram 
+                if (rawUrl.includes("instagram.com")) {
+                    frameClass = "ig-frame";
+                } 
+
+                // scrolling="no" hides the ugly side scrollbars
+                card.innerHTML = `<iframe class="${frameClass}" src="${fixedUrl}" scrolling="no" frameborder="0" allowfullscreen></iframe>`;
                 container.appendChild(card);
                 
                 revealObserver.observe(card);
