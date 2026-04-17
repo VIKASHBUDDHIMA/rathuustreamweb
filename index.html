@@ -201,10 +201,14 @@
                 box-shadow: none !important;
                 border-color: var(--border) !important;
             }
-            .short-card:hover {
-                aspect-ratio: 4/5 !important;
-                transform: none !important;
+            
+            /* ALLOW SHORTS TO EXPAND ON MOBILE TOUCH */
+            .short-card:hover, .short-card.active-touch, .short-card:focus-within {
+                aspect-ratio: 9/16 !important;
+                transform: none !important; /* Keep it flat, but expand ratio */
+                border-color: var(--primary) !important;
             }
+
             .mini-list-item:hover {
                 background: rgba(255, 255, 255, 0.03) !important;
             }
@@ -691,6 +695,12 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+        // --- FORCE PAGE TO START AT TOP ON LOAD ---
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
         // --- MOBILE MENU LOGIC ---
         const menuBtn = document.getElementById('mobile-menu-btn');
         const navList = document.getElementById('nav-list');
@@ -933,7 +943,6 @@
             }
         }
 
-        // --- MODIFIED TO ADD CSS HACKS & SCROLLING="NO" ---
         function renderShortsBatch() {
             const container = document.getElementById('shorts-container');
             const seeMoreWrapper = document.getElementById('see-more-wrapper');
@@ -957,6 +966,15 @@
 
                 // scrolling="no" hides the ugly side scrollbars
                 card.innerHTML = `<iframe class="${frameClass}" src="${fixedUrl}" scrolling="no" frameborder="0" allowfullscreen></iframe>`;
+                
+                // Mobile tap handler to expand ratio
+                card.addEventListener('touchstart', function() {
+                    if (window.innerWidth <= 900) {
+                        document.querySelectorAll('.short-card').forEach(c => c.classList.remove('active-touch'));
+                        this.classList.add('active-touch');
+                    }
+                }, {passive: true});
+
                 container.appendChild(card);
                 
                 revealObserver.observe(card);
