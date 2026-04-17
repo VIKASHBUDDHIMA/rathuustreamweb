@@ -661,7 +661,7 @@
         }
         animate();
 
-        // --- HOVER & GLOW LOGIC (MODIFIED FOR DYNAMIC ELEMENTS) ---
+        // --- HOVER & GLOW LOGIC ---
         function apply3DEffect(card) {
             card.addEventListener('mousemove', e => {
                 let rect = card.getBoundingClientRect();
@@ -713,25 +713,52 @@
             revealObserver.observe(el);
         });
 
-        // --- YOUTUBE URL FIXER ---
-        function fixYoutubeUrl(url) {
+        // --- UNIVERSAL URL FIXER (YouTube, TikTok, Instagram) ---
+        function fixVideoUrl(url) {
             if (!url) return "";
-            let videoId = "";
-            
-            if (url.includes("shorts/")) {
-                videoId = url.split("shorts/")[1].split("?")[0].split("&")[0];
-            } else if (url.includes("v=")) {
-                videoId = url.split("v=")[1].split("&")[0];
-            } else if (url.includes("youtu.be/")) {
-                videoId = url.split("youtu.be/")[1].split("?")[0];
-            } else if (url.includes("embed/")) {
-                videoId = url.split("embed/")[1].split("?")[0];
-            }
+            let finalUrl = url;
 
-            if (videoId) {
-                return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&controls=1`;
+            // YouTube Logic
+            if (url.includes("youtube.com") || url.includes("youtu.be")) {
+                let videoId = "";
+                if (url.includes("shorts/")) {
+                    videoId = url.split("shorts/")[1].split("?")[0].split("&")[0];
+                } else if (url.includes("v=")) {
+                    videoId = url.split("v=")[1].split("&")[0];
+                } else if (url.includes("youtu.be/")) {
+                    videoId = url.split("youtu.be/")[1].split("?")[0];
+                } else if (url.includes("embed/")) {
+                    videoId = url.split("embed/")[1].split("?")[0];
+                }
+                if (videoId) {
+                    finalUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&controls=0`;
+                }
+            } 
+            // TikTok Logic
+            else if (url.includes("tiktok.com")) {
+                let videoId = "";
+                if (url.includes("/video/")) {
+                    videoId = url.split("/video/")[1].split("?")[0];
+                }
+                if (videoId) {
+                    finalUrl = `https://www.tiktok.com/embed/v2/${videoId}`;
+                }
             }
-            return url;
+            // Instagram Logic
+            else if (url.includes("instagram.com")) {
+                let postId = "";
+                if (url.includes("/reel/")) {
+                    postId = url.split("/reel/")[1].split("/")[0].split("?")[0];
+                } else if (url.includes("/p/")) {
+                    postId = url.split("/p/")[1].split("/")[0].split("?")[0];
+                }
+                if (postId) {
+                    finalUrl = `https://www.instagram.com/p/${postId}/embed/?hidecaption=1`;
+                } else if (url.includes("/embed")) {
+                    finalUrl = url;
+                }
+            }
+            return finalUrl;
         }
 
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQr9v_05WJRLQRyQcKUlsWq2t-PaYHVB0sp8nrHwfZO7QfVhHlKkxFqWaf_yN8VJC3QnQZELt5JjLws/pub?output=csv';
@@ -844,10 +871,10 @@
             for (let i = currentShortsIndex; i < end; i++) {
                 const card = document.createElement('div');
                 card.className = 'card-3d short-card reveal';
-                card.innerHTML = `<iframe src="${fixYoutubeUrl(allShorts[i])}" allowfullscreen></iframe>`;
+                // Updated line to use fixVideoUrl
+                card.innerHTML = `<iframe src="${fixVideoUrl(allShorts[i])}" allowfullscreen></iframe>`;
                 container.appendChild(card);
                 
-                // Observer and Hover effect apply to new element
                 revealObserver.observe(card);
                 apply3DEffect(card);
             }
