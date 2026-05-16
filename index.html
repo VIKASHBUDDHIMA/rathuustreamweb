@@ -470,304 +470,198 @@
 
         .short-card:hover { aspect-ratio: 9/16; transform: scale(1.05) translateY(-10px); border-color: var(--primary); }
 
-        /* ==========================================================================
-           --- MODERN GAMING FOOTER STYLES ---
-           ========================================================================== */
-        .footer-wrapper {
-            position: relative;
-            margin-top: 0;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
+        /* --- NEW ULTRA-RESPONSIVE FOOTER STYLES --- */
+        footer {
+            background: #070708;
+            padding: 60px 8% 30px 8%;
             border-top: 1px solid var(--border);
-            font-family: 'Outfit', sans-serif;
-            z-index: 100;
-        }
-
-        /* Overlapping Subscribe/Newsletter Container */
-        .newsletter-container {
-            max-width: 1200px;
-            margin: -60px auto 0 auto;
-            padding: 0 8%;
             position: relative;
-            z-index: 110;
-        }
-
-        .newsletter-box {
-            background: linear-gradient(135deg, #121212 0%, #1c1c1c 100%);
-            border: 1px solid var(--primary);
-            box-shadow: 0 10px 30px rgba(255, 0, 60, 0.15);
-            border-radius: 16px;
-            padding: 35px 50px;
+            z-index: 10;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            gap: 30px;
+            text-align: center;
         }
 
-        .newsletter-text h3 {
-            font-family: 'Bebas Neue';
+        .footer-newsletter {
+            background: #0c0c0e;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 25px rgba(255, 0, 60, 0.2);
+            border-radius: 15px;
+            padding: 30px 25px;
+            width: 100%;
+            max-width: 480px;
+            margin-bottom: 45px;
+        }
+
+        .newsletter-title {
+            font-family: 'Bebas Neue', sans-serif;
             font-size: 2.2rem;
-            letter-spacing: 2px;
             color: #fff;
-            margin-bottom: 5px;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
         }
 
-        .newsletter-text h3 span {
+        .newsletter-title span {
             color: var(--primary);
         }
 
-        .newsletter-text p {
+        .newsletter-sub {
+            font-size: 13px;
             color: #aaa;
-            font-size: 0.95rem;
+            margin-bottom: 20px;
+            font-weight: 300;
         }
 
         .newsletter-form {
             display: flex;
-            gap: 15px;
-            flex-grow: 1;
-            max-width: 500px;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
         }
 
-        .newsletter-form input {
-            flex-grow: 1;
-            background: rgba(0, 0, 0, 0.6);
+        .newsletter-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: #050505;
             border: 1px solid var(--border);
-            padding: 15px 20px;
             border-radius: 8px;
             color: #fff;
-            font-size: 0.95rem;
+            font-size: 14px;
             outline: none;
             transition: 0.3s;
         }
 
-        .newsletter-form input:focus {
+        .newsletter-input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(255, 0, 60, 0.2);
+            box-shadow: 0 0 10px rgba(255, 0, 60, 0.2);
         }
 
-        .newsletter-form button {
+        .newsletter-btn {
+            width: 100%;
+            padding: 14px;
             background: var(--primary);
             color: #fff;
             border: none;
-            padding: 0 30px;
             border-radius: 8px;
-            font-family: 'Bebas Neue';
-            font-size: 1.4rem;
-            letter-spacing: 1px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
             cursor: pointer;
             transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(255, 0, 60, 0.3);
         }
 
-        .newsletter-form button:hover {
-            background: #ff2a5f;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 0, 60, 0.5);
+        .newsletter-btn:hover {
+            background: #e60036;
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
         }
 
-        /* Main Footer Links & Content Grid */
-        .main-footer {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 50px 8% 60px 8%;
-            display: grid;
-            grid-template-columns: 2fr repeat(3, 1fr);
-            gap: 50px;
+        .footer-brand {
+            font-family: 'MyCustomGamingFont', sans-serif;
+            font-size: clamp(2.2rem, 7.5vw, 4.8rem); /* Fluid scaling prevents overflow on mobile */
+            line-height: 1;
+            color: #fff;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            max-width: 100%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
-        .footer-brand h2 {
-            font-family: 'MyCustomGamingFont';
-            font-size: 2.5rem;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-        }
-
-        .footer-brand h2 span {
+        .footer-brand span {
+            font-family: 'MyCustomGamingFont', sans-serif;
             color: var(--primary);
-            text-shadow: 0 0 15px var(--primary);
+            text-shadow: 0 0 20px var(--primary);
         }
 
-        .footer-brand p {
-            color: #888;
+        .footer-desc {
+            font-size: 14px;
+            color: #bbb;
+            max-width: 550px;
             line-height: 1.6;
-            font-size: 0.95rem;
-            margin-bottom: 25px;
-            max-width: 320px;
+            margin-bottom: 35px;
+            font-weight: 300;
         }
 
         .footer-socials {
             display: flex;
             gap: 15px;
+            margin-bottom: 40px;
         }
 
         .footer-socials a {
-            width: 42px;
-            height: 42px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
             display: flex;
             justify-content: center;
             align-items: center;
             color: #fff;
             text-decoration: none;
-            font-size: 1.1rem;
+            font-size: 18px;
             transition: 0.3s;
         }
 
         .footer-socials a:hover {
-            background: var(--primary);
             border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary);
+            background: rgba(255, 0, 60, 0.1);
+            color: var(--primary);
             transform: translateY(-3px);
         }
 
-        .footer-col h4 {
-            font-family: 'Bebas Neue';
-            font-size: 1.4rem;
-            letter-spacing: 2px;
-            color: #fff;
-            margin-bottom: 22px;
-            position: relative;
+        .footer-nav {
+            margin-bottom: 45px;
         }
 
-        .footer-col h4::after {
+        .footer-nav-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            color: #fff;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-nav-title::after {
             content: '';
             position: absolute;
-            left: 0;
-            bottom: -6px;
-            width: 30px;
+            bottom: -4px;
+            left: 25%;
+            width: 50%;
             height: 2px;
             background: var(--primary);
         }
 
-        .footer-col ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
         }
 
-        .footer-col ul li {
-            margin-bottom: 12px;
-        }
-
-        .footer-col ul li a {
+        .footer-links a {
             color: #888;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 14px;
             transition: 0.3s;
+            font-weight: 500;
         }
 
-        .footer-col ul li a:hover {
+        .footer-links a:hover {
             color: var(--primary);
-            padding-left: 5px;
         }
 
-        /* Footer Copyright Bottom Bar */
-        .footer-bottom {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px 8%;
+        .footer-copy {
+            font-size: 11px;
+            color: #444;
+            letter-spacing: 3px;
+            text-transform: uppercase;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .footer-bottom p {
-            color: #555;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-        }
-
-        .footer-bottom-links {
-            display: flex;
-            gap: 25px;
-        }
-
-        .footer-bottom-links a {
-            color: #555;
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: 0.3s;
-        }
-
-        .footer-bottom-links a:hover {
-            color: var(--primary);
-        }
-
-        /* Responsive Design for Footer */
-        @media (max-width: 950px) {
-            .newsletter-box {
-                flex-direction: column;
-                text-align: center;
-                padding: 35px 30px;
-            }
-            .newsletter-form {
-                width: 100%;
-                max-width: 100%;
-            }
-            .main-footer {
-                grid-template-columns: 1fr 1fr;
-                gap: 40px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .newsletter-box {
-                padding: 30px 20px;
-            }
-            .newsletter-text h3 {
-                font-size: 1.8rem;
-            }
-            .newsletter-text p {
-                font-size: 0.85rem;
-            }
-            .newsletter-form {
-                flex-direction: column;
-                width: 100%;
-                gap: 12px;
-            }
-            .newsletter-form input {
-                width: 100%;
-                padding: 14px 15px;
-            }
-            .newsletter-form button {
-                width: 100%;
-                padding: 14px 0;
-            }
-            .main-footer {
-                grid-template-columns: 1fr;
-                gap: 40px;
-                text-align: center;
-                padding: 40px 8% 40px 8%;
-            }
-            .footer-brand {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-            .footer-brand p {
-                max-width: 100%;
-                margin: 0 auto 20px auto;
-            }
-            .footer-socials {
-                justify-content: center;
-            }
-            .footer-col h4::after {
-                left: 50%;
-                transform: translateX(-50%);
-            }
-            .footer-bottom {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-                padding: 25px 8%;
-            }
-            .footer-bottom-links {
-                justify-content: center;
-                gap: 20px;
-            }
+            padding-top: 25px;
+            width: 100%;
         }
 
         .network-container { display: flex; justify-content: space-between; align-items: stretch; gap: 20px; width: 100%; perspective: 1000px; }
@@ -1001,71 +895,41 @@
         </div>
     </section>
 
-    <div class="footer-wrapper">
-        <div class="newsletter-container">
-            <div class="newsletter-box">
-                <div class="newsletter-text">
-                    <h3>SUBSCRIBE TO OUR <span>NEWS</span></h3>
-                    <p>Get notified immediately when the live stream starts!</p>
-                </div>
-                <div class="newsletter-form">
-                    <input type="email" placeholder="Enter your email address" required>
-                    <button type="submit">SUBSCRIBE</button>
-                </div>
+    <footer>
+        <div class="footer-newsletter reveal">
+            <h3 class="newsletter-title">SUBSCRIBE TO OUR <span>NEWS</span></h3>
+            <p class="newsletter-sub">Get notified immediately when the live stream starts!</p>
+            <form class="newsletter-form" onsubmit="event.preventDefault();">
+                <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+                <button type="submit" class="newsletter-btn">SUBSCRIBE</button>
+            </form>
+        </div>
+
+        <h2 class="footer-brand reveal">RATHUU<span>STREAMS</span></h2>
+        <p class="footer-desc reveal">Experience high-end next-generation gaming live streams, elite clips, and advanced technical setups.</p>
+        
+        <div class="footer-socials reveal">
+            <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-discord"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+        </div>
+
+        <div class="footer-nav reveal">
+            <h4 class="footer-nav-title">NAVIGATION</h4>
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#bio">About Bio</a>
+                <a href="#specs">Specs</a>
+                <a href="#playing">Playing</a>
+                <a href="#highlights">Shorts</a>
+                <a href="#network">Network</a>
             </div>
         </div>
 
-        <footer class="main-footer">
-            <div class="footer-brand">
-                <h2>RATHUU<span>STREAMS</span></h2>
-                <p>Experience high-end next-generation gaming live streams, elite clips, and advanced technical setups.</p>
-                <div class="footer-socials">
-                    <a href="#" id="f-yt" target="_blank"><i class="fab fa-youtube"></i></a>
-                    <a href="#" id="f-ds" target="_blank"><i class="fab fa-discord"></i></a>
-                    <a href="#" id="f-tk" target="_blank"><i class="fab fa-tiktok"></i></a>
-                    <a href="#" id="f-fb" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                </div>
-            </div>
+        <div class="footer-copy">RATHUU STREAM &bull; 2026</div>
+    </footer>
 
-            <div class="footer-col">
-                <h4>NAVIGATION</h4>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#bio">About Bio</a></li>
-                    <li><a href="#specs">PC Setup</a></li>
-                    <li><a href="#playing">Live Status</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>STREAM SPECS</h4>
-                <ul>
-                    <li><a href="#specs">Processor</a></li>
-                    <li><a href="#specs">Graphics Card</a></li>
-                    <li><a href="#specs">RAM Module</a></li>
-                    <li><a href="#specs">Display Gear</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>COMMUNITY</h4>
-                <ul>
-                    <li><a href="#" class="c-discord" target="_blank">Join Discord</a></li>
-                    <li><a href="#" class="c-youtube" target="_blank">YouTube Channel</a></li>
-                    <li><a href="#" class="c-facebook" target="_blank">Facebook Page</a></li>
-                    <li><a href="#" class="c-tiktok" target="_blank">TikTok Feed</a></li>
-                </ul>
-            </div>
-        </footer>
-
-        <div class="footer-bottom">
-            <p>&copy; 2026 RATHUU STREAMS. All rights reserved.</p>
-            <div class="footer-bottom-links">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-            </div>
-        </div>
-    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         // --- FORCE PAGE TO START AT TOP ON LOAD ---
@@ -1199,7 +1063,7 @@
             else if (url.includes("tiktok.com")) {
                 let videoId = "";
                 if (url.includes("/video/")) {
-                    videoId = url.split("/video/")[1].split("?")[0].split("?")[0];
+                    videoId = url.split("/video/")[1].split("?")[0];
                 }
                 if (videoId) {
                     finalUrl = `https://www.tiktok.com/embed/v2/${videoId}`;
@@ -1318,6 +1182,7 @@
             }
         }
 
+        // --- RENDER SHORTS ---
         function renderShortsBatch() {
             const container = document.getElementById('shorts-container');
             const seeMoreWrapper = document.getElementById('see-more-wrapper');
